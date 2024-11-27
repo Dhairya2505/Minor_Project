@@ -3,6 +3,27 @@ import numpy as np
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import adfuller
 from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+import io
+import base64
+
+def create_chart(data, forecasted, x, y, title):
+    
+    plt.figure()
+    plt.plot(forecasted, label='Forecated values')
+    plt.plot(data, label='Actual values')
+    plt.xlabel(x)
+    plt.ylabel(y)
+    plt.legend()
+    plt.title(title)
+
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+
+    img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
+
+    return img_base64
 
 def adf_test(series):
     result = adfuller(series)
@@ -58,23 +79,51 @@ def sarima(file):
     forecasts = {}
 
     [values,mse] = forecastValues(data['High'])
-    forecasts['High'] = np.concatenate((np.array(data['High']),np.array(values),np.array([mse])))
+    img = create_chart(data['High'], values, 'Time', 'Price', 'Highest price of the coin')
+    forecasts['High'] = {
+        'img': img,
+        'values': values.tolist(),
+        'mse': mse
+    }
 
     [values,mse] = forecastValues(data['Low'])
-    forecasts['Low'] = np.concatenate((np.array(data['Low']),np.array(values),np.array([mse])))
+    img = create_chart(data['Low'], values, 'Time', 'Price', 'Lowest price of the coin')
+    forecasts['Low'] = {
+        'img': img,
+        'values': values.tolist(),
+        'mse': mse
+    }
     
     [values,mse] = forecastValues(data['Open'])
-    forecasts['Open'] = np.concatenate((np.array(data['Open']),np.array(values),np.array([mse])))
+    img = create_chart(data['Open'], values, 'Time', 'Price', 'Opening price of the coin')
+    forecasts['Open'] = {
+        'img': img,
+        'values': values.tolist(),
+        'mse': mse
+    }
     
     [values,mse] = forecastValues(data['Close'])
-    forecasts['Close'] = np.concatenate((np.array(data['Close']),np.array(values),np.array([mse])))
+    img = create_chart(data['Close'], values, 'Time', 'Price', 'Closing price of the coin')
+    forecasts['Close'] = {
+        'img': img,
+        'values': values.tolist(),
+        'mse': mse
+    }
     
     [values,mse] = forecastValues(data['Volume'])
-    forecasts['Volume'] = np.concatenate((np.array(data['Volume']),np.array(values),np.array([mse])))
+    img = create_chart(data['Volume'], values, 'Time', 'Price', 'Volume of the coin')
+    forecasts['Volume'] = {
+        'img': img,
+        'values': values.tolist(),
+        'mse': mse
+    }
     
     [values,mse] = forecastValues(data['Marketcap'])
-    forecasts['Marketcap'] = np.concatenate((np.array(data['Marketcap']),np.array(values),np.array([mse])))
+    img = create_chart(data['Marketcap'], values, 'Time', 'Price', 'Marketcap of the coin')
+    forecasts['Marketcap'] = {
+        'img': img,
+        'values': values.tolist(),
+        'mse': mse
+    }
 
-    json_data = {key: value.tolist() if isinstance(value, np.ndarray) else value for key, value in forecasts.items()}
-
-    return json_data
+    return forecasts

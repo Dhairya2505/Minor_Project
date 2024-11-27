@@ -13,11 +13,37 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { div } from "framer-motion/client";
 
 export default function Home() {
   
   const [uploadedFile, setFile] = useState<File[]>();
-  const [model, setModel] = useState<string>("");
+  const [model, setModel] = useState<String>("");
+  const [data, setData] = useState<{'High':{
+    img: String,
+    values: Array<Number>,
+    mse: Number
+  },'Low':{
+    img: String,
+    values: Array<Number>,
+    mse: Number
+  },'Open':{
+    img: String,
+    values: Array<Number>,
+    mse: Number
+  },'Close':{
+    img: String,
+    values: Array<Number>,
+    mse: Number
+  },'Volume':{
+    img: String,
+    values: Array<Number>,
+    mse: Number
+  },'Marketcap':{
+    img: String,
+    values: Array<Number>,
+    mse: Number
+  }}>()
 
   const handleFileUpload = (files: File[]) => {
     setFile(files);
@@ -74,11 +100,11 @@ export default function Home() {
           formData.append('model',model) 
           if(model == "arima" || model == "sarima" || model == "es"){
             const response = await getForecast(formData);
-            console.log(response.data)
+            setData(response.data)
 
           } else {
             const response = await getPredictions(formData);
-            console.log(response.data)
+            setData(response.data)
 
           }
         } else {
@@ -121,7 +147,165 @@ export default function Home() {
             <Button className="text-white border border-white" onClick={sendFile}>Predict</Button>
           </div>
         </div>
-      </div>      
+      </div>
+      {
+        data && 
+        <div className="text-white">
+          <div className="">
+            <div className="flex p-10">
+              {
+                data &&
+                <img src={`data:image/png;base64,${data.High.img}`} height={`600px`} width={`600px`} alt="" />  
+              }
+              <div>
+                {
+                  data?.High.values.map((e,i) => {
+                    return  <div className="flex" key={i}>
+                              <div className="px-3">
+                                {i+1}
+                              </div>
+                              <div className="px-3">
+                                {`${e}`}
+                              </div>
+                            </div>
+                  })
+                }
+
+              </div>
+              <div>
+                MSE - {`${data?.High.mse}`}
+              </div>
+              
+            </div>
+            <div className="flex p-10">
+              {
+                data &&
+                <img src={`data:image/png;base64,${data.Low.img}`} height={`600px`} width={`600px`} alt="" />  
+              }
+
+              <div>
+                {
+                  data?.Low.values.map((e,i) => {
+                    return  <div className="flex" key={i}>
+                              <div className="px-3">
+                                {i+1}
+                              </div>
+                              <div className="px-3">
+                                {`${e}`}
+                              </div>
+                            </div>
+                  })
+                }
+
+              </div>
+              <div>
+                MSE - {`${data?.Low.mse}`}
+              </div>
+            </div>
+            <div className="flex p-10">
+              {
+                data &&
+                <img src={`data:image/png;base64,${data.Open.img}`} height={`600px`} width={`600px`} alt="" />  
+              }
+
+              <div>
+                {
+                  data?.Open.values.map((e,i) => {
+                    return  <div className="flex" key={i}>
+                              <div className="px-3">
+                                {i+1}
+                              </div>
+                              <div className="px-3">
+                                {`${e}`}
+                              </div>
+                            </div>
+                  })
+                }
+
+              </div>
+              <div>
+              MSE - {`${data?.Open.mse}`}
+            </div>
+            </div>
+            <div className="flex p-10">
+              {
+                data &&
+                <img src={`data:image/png;base64,${data.Close.img}`} height={`600px`} width={`600px`} alt="" />  
+              } 
+
+              <div>
+                {
+                  data?.Close.values.map((e,i) => {
+                    return  <div className="flex" key={i}>
+                              <div className="px-3">
+                                {i+1}
+                              </div>
+                              <div className="px-3">
+                                {`${e}`}
+                              </div>
+                            </div>
+                  })
+                }
+
+              </div>
+              <div>
+            MSE - {`${data?.Close.mse}`}
+          </div>
+            </div>
+            <div className="flex p-10">
+              {
+                data &&
+                <img src={`data:image/png;base64,${data.Volume.img}`} height={`600px`} width={`600px`} alt="" />  
+              }
+
+              <div>
+                {
+                  data?.Volume.values.map((e,i) => {
+                    return  <div className="flex" key={i}>
+                              <div className="px-3">
+                                {i+1}
+                              </div>
+                              <div className="px-3">
+                                {`${e}`}
+                              </div>
+                            </div>
+                  })
+                }
+
+              </div>
+              <div>
+            MSE - {`${data?.Volume.mse}`}
+          </div>
+            </div>
+            <div className="flex p-10">
+              {
+                data &&
+                <img src={`data:image/png;base64,${data.Marketcap.img}`} height={`600px`} width={`600px`} alt="" />  
+              }
+
+              <div>
+                {
+                  data?.Marketcap.values.map((e,i) => {
+                    return  <div className="flex" key={i}>
+                              <div className="px-3">
+                                {i+1}
+                              </div>
+                              <div className="px-3">
+                                {`${e}`}
+                              </div>
+                            </div>
+                  })
+                }
+
+              </div>
+              <div>
+                MSE - {`${data?.Marketcap.mse}`}
+              </div>
+            </div>
+          </div>
+          
+        </div>      
+      }
     </div>
   );
 }
