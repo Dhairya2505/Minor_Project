@@ -75,6 +75,8 @@ def arima(file):
     
     [values,mse] = forecastValues(data['Marketcap'])
     forecasts['Marketcap'] = np.concatenate((np.array(data['Marketcap']),np.array(values),np.array([mse])))
+    
+    forecasts['index'] = np.arange(0,len(data['High'])+20)
 
     json_data = {key: value.tolist() if isinstance(value, np.ndarray) else value for key, value in forecasts.items()}
 
