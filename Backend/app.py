@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from ARIMA import arima 
 from SARIMA import sarima
+from ExponentialSmoothing import expo_smoothing
 
 app = Flask(__name__)
 CORS(app)
@@ -25,6 +26,8 @@ def getForecast():
         forecasts = arima(file)
     elif model == 'sarima':
         forecasts = sarima(file)
+    elif model == "es":
+        forecasts = expo_smoothing(file)
 
     return jsonify(forecasts)
 
